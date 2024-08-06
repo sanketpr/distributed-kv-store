@@ -1,13 +1,14 @@
 package kvsrv
 
-import "6.5840/labrpc"
-import "crypto/rand"
-import "math/big"
+import (
+	"crypto/rand"
+	"math/big"
 
+	"6.5840/labrpc"
+)
 
 type Clerk struct {
 	server *labrpc.ClientEnd
-	// You will have to modify this struct.
 }
 
 func nrand() int64 {
@@ -35,9 +36,18 @@ func MakeClerk(server *labrpc.ClientEnd) *Clerk {
 // must match the declared types of the RPC handler function's
 // arguments. and reply must be passed as a pointer.
 func (ck *Clerk) Get(key string) string {
-
+	args := GetArgs{
+		Key: key,
+	}
+	reply := GetReply{}
+	for i := 0; i < 5; i++ {
+		ok := ck.server.Call("KVServer.Get", &args, &reply)
+		if ok {
+			break
+		}
+	}
 	// You will have to modify this function.
-	return ""
+	return reply.Value
 }
 
 // shared by Put and Append.
@@ -48,9 +58,30 @@ func (ck *Clerk) Get(key string) string {
 // the types of args and reply (including whether they are pointers)
 // must match the declared types of the RPC handler function's
 // arguments. and reply must be passed as a pointer.
-func (ck *Clerk) PutAppend(key string, value string, op string) string {
-	// You will have to modify this function.
-	return ""
+func (ck *Clerk) PutAppend(key string, value string, op string) PutAppendReply {
+	args := PutAppendArgs{
+		Key:       key,
+		OldValue:  ck.Get(key),
+		NewValue:  value,
+		RequestId: nrand(),
+	}
+	serverReply := PutAppendReply{
+		Value:        "",
+		ResponseCode: 0,
+	}
+
+	for {
+		isCallComplete := ck.server.Call("KVServer."+op, &args, &serverReply)
+		if isCallComplete {
+			if serverReply.ResponseCode == 200 {
+				break
+			} else if serverReply.ResponseCode == 409 {
+				args.OldValue = ck.Get(key)
+			}
+		}
+	}
+
+	return serverReply
 }
 
 func (ck *Clerk) Put(key string, value string) {
@@ -59,5 +90,7 @@ func (ck *Clerk) Put(key string, value string) {
 
 // Append value to key's value and return that value
 func (ck *Clerk) Append(key string, value string) string {
-	return ck.PutAppend(key, value, "Append")
+	serverReply := ck.PutAppend(key, value, "Append")
+
+	return serverReply.Value
 }

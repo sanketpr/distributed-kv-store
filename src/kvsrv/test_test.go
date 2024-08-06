@@ -1,14 +1,15 @@
 package kvsrv
 
 import (
+	"log"
+	"runtime"
+
 	"6.5840/models"
 	"6.5840/porcupine"
 
 	"fmt"
 	"io/ioutil"
-	"log"
 	"math/rand"
-	"runtime"
 	"strconv"
 	"strings"
 	"sync"
