@@ -145,7 +145,8 @@ type RequestVoteReply struct {
 // example RequestVote RPC handler.
 func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 	// Your code here (3A, 3B).
-	if args.Term > rf.Term && (args.LastLogTerm > rf.LastLogTerm || (args.LastLogTerm == rf.LastLogTerm && args.LastLogIndex >= rf.LastLogIndex)) {
+	if args.Term > rf.Term && (args.LastLogTerm > rf.LastLogTerm 
+		|| (args.LastLogTerm == rf.LastLogTerm && args.LastLogIndex >= rf.LastLogIndex)) {
 		reply.VoteGranted = true
 		rf.mu.Lock()
 		rf.LastMessageTime = time.Now()
