@@ -8,20 +8,24 @@ package raft
 // test with the original before submitting.
 //
 
-import "6.5840/labgob"
-import "6.5840/labrpc"
-import "bytes"
-import "log"
-import "sync"
-import "sync/atomic"
-import "testing"
-import "runtime"
-import "math/rand"
-import crand "crypto/rand"
-import "math/big"
-import "encoding/base64"
-import "time"
-import "fmt"
+import (
+	"bytes"
+	"log"
+	"math/rand"
+	"runtime"
+	"sync"
+	"sync/atomic"
+	"testing"
+
+	"6.5840/labgob"
+	"6.5840/labrpc"
+
+	crand "crypto/rand"
+	"encoding/base64"
+	"fmt"
+	"math/big"
+	"time"
+)
 
 func randstring(n int) string {
 	b := make([]byte, 2*n)
@@ -446,6 +450,12 @@ func (cfg *config) checkOneLeader() int {
 				lastTermWithLeader = term
 			}
 		}
+
+		leadersString := ""
+		for term, leaders := range leaders {
+			leadersString += fmt.Sprintf("term %d: %v; ", term, leaders)
+		}
+		// println("** Orchestrator log: elapsed: ", time.Since(cfg.start), "| leaders: ", leadersString, " lastTermWithLeader: ", lastTermWithLeader)
 
 		if len(leaders) != 0 {
 			return leaders[lastTermWithLeader][0]
