@@ -68,25 +68,6 @@ type Raft struct {
 	IsLeader    bool
 }
 
-// type TermState struct {
-// 	Term     int
-// 	Leader   int
-// 	votedFor int
-// }
-
-// type ElectionState struct {
-// 	State               NodeState
-// 	ShouldAbortElection bool
-// }
-
-// type NodeState int
-
-// const (
-// 	Follower NodeState = iota
-// 	Candidate
-// 	Leader
-// )
-
 func (rf *Raft) GetState() (int, bool) {
 	rf.mu.Lock()
 	defer rf.mu.Unlock()

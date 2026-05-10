@@ -451,12 +451,6 @@ func (cfg *config) checkOneLeader() int {
 			}
 		}
 
-		leadersString := ""
-		for term, leaders := range leaders {
-			leadersString += fmt.Sprintf("term %d: %v; ", term, leaders)
-		}
-		// println("** Orchestrator log: elapsed: ", time.Since(cfg.start), "| leaders: ", leadersString, " lastTermWithLeader: ", lastTermWithLeader)
-
 		if len(leaders) != 0 {
 			return leaders[lastTermWithLeader][0]
 		}
